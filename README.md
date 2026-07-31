@@ -1,4 +1,4 @@
-# AQUA Enterprise AI Agent Platform: Self-Pruning Neural Network & Reverse-Mode Autodiff Engine
+# Self-Pruning Neural Network & Reverse-Mode Autodiff Engine
 
 A pure Python and NumPy implementation of a reverse-mode automatic differentiation engine, composable neural network framework, Adam optimizer with parameter mask tracking, and dynamic self-pruning mechanism featuring Taylor-expansion saliency estimation and RigL gradient-based regrowth.
 
