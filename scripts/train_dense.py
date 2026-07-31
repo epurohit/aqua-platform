@@ -20,6 +20,9 @@ def main():
     print(" AQUA Part 2: Dense Neural Network Training with Adam Optimizer")
     print("=" * 65)
     
+    # Set global random seed for exact reproducibility
+    np.random.seed(42)
+    
     # 1. Load Dataset
     X_train, y_train, X_test, y_test = load_digits_dataset(seed=42)
     print(f"Dataset Loaded: Train shape={X_train.shape}, Test shape={X_test.shape}")
