@@ -6,9 +6,12 @@ def unbroadcast(grad: np.ndarray, target_shape: Tuple[int, ...]) -> np.ndarray:
     """
     Reduces gradient dimensions to match parent target shape after forward broadcasting.
 
-    When NumPy broadcasts arrays during forward operations (e.g., (N, D) + (D,)),
-    the output gradient has shape (N, D). This function sums out broadcasted axes
-    to reduce the gradient back to the parent's target shape (D,).
+    Refinement Logic:
+      Unifies scalar and multi-dimensional shape reduction into a concise, unified pipeline:
+      1. Returns immediately if shapes already match.
+      2. Handles scalar target_shape () by summing all gradient elements.
+      3. Sums out extra leading batch dimensions added by broadcasting.
+      4. Sums out singleton axes (size 1) where broadcasting expanded dimensions.
 
     Args:
         grad (np.ndarray): Incoming gradient array of shape (G_1, G_2, ..., G_k).
@@ -20,17 +23,16 @@ def unbroadcast(grad: np.ndarray, target_shape: Tuple[int, ...]) -> np.ndarray:
     if grad.shape == target_shape:
         return grad
     
-    if target_shape == () or target_shape == (1,):
-        if target_shape == (1,) and grad.shape == (1,):
-            return grad
-        return np.sum(grad).reshape(target_shape)
+    # Handle scalar target shape ()
+    if target_shape == ():
+        return np.sum(grad)
     
     # 1. Sum out extra leading dimensions created by broadcasting
     ndim_diff = grad.ndim - len(target_shape)
     if ndim_diff > 0:
         grad = np.sum(grad, axis=tuple(range(ndim_diff)))
     
-    # 2. Sum out dimensions where target_shape has size 1
+    # 2. Sum out singleton dimensions where target_shape is 1
     axes_to_sum = tuple(i for i, dim in enumerate(target_shape) if dim == 1)
     if axes_to_sum:
         grad = np.sum(grad, axis=axes_to_sum, keepdims=True)

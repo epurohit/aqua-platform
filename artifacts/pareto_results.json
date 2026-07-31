@@ -6,7 +6,7 @@
     "test_accuracy": 0.9777777777777777,
     "dense_flops": 12928,
     "sparse_flops": 12928,
-    "train_time_sec": 0.7230415344238281
+    "train_time_sec": 0.7221372127532959
   },
   {
     "method": "dynamic_saliency_regrowth",
@@ -15,7 +15,7 @@
     "test_accuracy": 0.975,
     "dense_flops": 12928,
     "sparse_flops": 6594,
-    "train_time_sec": 0.8237028121948242
+    "train_time_sec": 0.8102297782897949
   },
   {
     "method": "dynamic_magnitude",
@@ -24,7 +24,7 @@
     "test_accuracy": 0.9805555555555555,
     "dense_flops": 12928,
     "sparse_flops": 6466,
-    "train_time_sec": 0.7351558208465576
+    "train_time_sec": 0.728419303894043
   },
   {
     "method": "one_shot_magnitude",
@@ -33,7 +33,7 @@
     "test_accuracy": 0.9777777777777777,
     "dense_flops": 12928,
     "sparse_flops": 6466,
-    "train_time_sec": 0.754793643951416
+    "train_time_sec": 0.6965699195861816
   },
   {
     "method": "dynamic_saliency_regrowth",
@@ -42,7 +42,7 @@
     "test_accuracy": 0.9722222222222222,
     "dense_flops": 12928,
     "sparse_flops": 4060,
-    "train_time_sec": 0.8946547508239746
+    "train_time_sec": 0.8867723941802979
   },
   {
     "method": "dynamic_magnitude",
@@ -51,7 +51,7 @@
     "test_accuracy": 0.9777777777777777,
     "dense_flops": 12928,
     "sparse_flops": 3882,
-    "train_time_sec": 0.766742467880249
+    "train_time_sec": 0.7468204498291016
   },
   {
     "method": "one_shot_magnitude",
@@ -60,7 +60,7 @@
     "test_accuracy": 0.9777777777777777,
     "dense_flops": 12928,
     "sparse_flops": 3882,
-    "train_time_sec": 0.7176513671875
+    "train_time_sec": 0.6948292255401611
   },
   {
     "method": "dynamic_saliency_regrowth",
@@ -69,7 +69,7 @@
     "test_accuracy": 0.9611111111111111,
     "dense_flops": 12928,
     "sparse_flops": 2792,
-    "train_time_sec": 0.8553845882415771
+    "train_time_sec": 1.464221477508545
   },
   {
     "method": "dynamic_magnitude",
@@ -78,7 +78,7 @@
     "test_accuracy": 0.9777777777777777,
     "dense_flops": 12928,
     "sparse_flops": 2588,
-    "train_time_sec": 0.7564890384674072
+    "train_time_sec": 0.8366556167602539
   },
   {
     "method": "one_shot_magnitude",
@@ -87,7 +87,7 @@
     "test_accuracy": 0.975,
     "dense_flops": 12928,
     "sparse_flops": 2588,
-    "train_time_sec": 0.758289098739624
+    "train_time_sec": 0.7474226951599121
   },
   {
     "method": "dynamic_saliency_regrowth",
@@ -96,7 +96,7 @@
     "test_accuracy": 0.9527777777777777,
     "dense_flops": 12928,
     "sparse_flops": 1526,
-    "train_time_sec": 0.8087611198425293
+    "train_time_sec": 0.8977570533752441
   },
   {
     "method": "dynamic_magnitude",
@@ -105,7 +105,7 @@
     "test_accuracy": 0.9638888888888889,
     "dense_flops": 12928,
     "sparse_flops": 1296,
-    "train_time_sec": 0.7543654441833496
+    "train_time_sec": 0.7521054744720459
   },
   {
     "method": "one_shot_magnitude",
@@ -114,7 +114,7 @@
     "test_accuracy": 0.9277777777777778,
     "dense_flops": 12928,
     "sparse_flops": 1296,
-    "train_time_sec": 0.7557575702667236
+    "train_time_sec": 0.7524054050445557
   },
   {
     "method": "dynamic_saliency_regrowth",
@@ -123,7 +123,7 @@
     "test_accuracy": 0.9583333333333334,
     "dense_flops": 12928,
     "sparse_flops": 894,
-    "train_time_sec": 0.8669359683990479
+    "train_time_sec": 0.7594115734100342
   },
   {
     "method": "dynamic_magnitude",
@@ -132,7 +132,7 @@
     "test_accuracy": 0.9361111111111111,
     "dense_flops": 12928,
     "sparse_flops": 650,
-    "train_time_sec": 0.7433841228485107
+    "train_time_sec": 0.7298839092254639
   },
   {
     "method": "one_shot_magnitude",
@@ -141,7 +141,7 @@
     "test_accuracy": 0.825,
     "dense_flops": 12928,
     "sparse_flops": 650,
-    "train_time_sec": 0.7551438808441162
+    "train_time_sec": 0.7205636501312256
   },
   {
     "method": "dynamic_saliency_regrowth",
@@ -150,7 +150,7 @@
     "test_accuracy": 0.9222222222222223,
     "dense_flops": 12928,
     "sparse_flops": 512,
-    "train_time_sec": 0.8246462345123291
+    "train_time_sec": 0.7652242183685303
   },
   {
     "method": "dynamic_magnitude",
@@ -159,7 +159,7 @@
     "test_accuracy": 0.7888888888888889,
     "dense_flops": 12928,
     "sparse_flops": 262,
-    "train_time_sec": 0.7851433753967285
+    "train_time_sec": 0.7416400909423828
   },
   {
     "method": "one_shot_magnitude",
@@ -168,6 +168,6 @@
     "test_accuracy": 0.17222222222222222,
     "dense_flops": 12928,
     "sparse_flops": 262,
-    "train_time_sec": 0.7273671627044678
+    "train_time_sec": 0.7259001731872559
   }
 ]

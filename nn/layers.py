@@ -28,6 +28,7 @@ class Linear(Module):
         w_data = np.random.randn(in_features, out_features) * std
         self.weight = Parameter(w_data)
         
+        # Trainable bias vector initialized to zeros (1D array matching out_features)
         if bias:
             b_data = np.zeros((out_features,))
             self.bias = Parameter(b_data)

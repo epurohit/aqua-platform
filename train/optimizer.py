@@ -51,7 +51,6 @@ class SGD(Optimizer):
             v = self.momentum * v + grad
             self.velocities[p_id] = v
             
-            # Mask check if parameter has weight mask
             mask = getattr(p, "mask", None)
             if mask is not None:
                 p.data -= self.lr * (v * mask)
@@ -123,17 +122,20 @@ class Adam(Optimizer):
             
             mask = getattr(p, "mask", None)
             
-            # Mask gradient if parameter is pruned
+            # Refinement Logic:
+            # Mask incoming gradient at entry. Since initial m and v are zero arrays,
+            # zeroing grad for masked weights guarantees m and v remain zero automatically,
+            # preventing moment decay corruption during pruning without redundant checks.
             if mask is not None:
                 grad = grad * mask
                 
-            # Update moments
+            # Update moment estimates
             m = self.beta1 * m + (1.0 - self.beta1) * grad
             v = self.beta2 * v + (1.0 - self.beta2) * (grad ** 2)
             
             if mask is not None:
-                m = m * mask
-                v = v * mask
+                m *= mask
+                v *= mask
                 
             self.m[p_id] = m
             self.v[p_id] = v
