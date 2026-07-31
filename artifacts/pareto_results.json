@@ -1,0 +1,173 @@
+[
+  {
+    "method": "dense_baseline",
+    "target_sparsity": 0.0,
+    "actual_sparsity": 0.0,
+    "test_accuracy": 0.9777777777777777,
+    "dense_flops": 12928,
+    "sparse_flops": 12928,
+    "train_time_sec": 0.7230415344238281
+  },
+  {
+    "method": "dynamic_saliency_regrowth",
+    "target_sparsity": 0.5,
+    "actual_sparsity": 0.48203957382039575,
+    "test_accuracy": 0.975,
+    "dense_flops": 12928,
+    "sparse_flops": 6594,
+    "train_time_sec": 0.8237028121948242
+  },
+  {
+    "method": "dynamic_magnitude",
+    "target_sparsity": 0.5,
+    "actual_sparsity": 0.4917808219178082,
+    "test_accuracy": 0.9805555555555555,
+    "dense_flops": 12928,
+    "sparse_flops": 6466,
+    "train_time_sec": 0.7351558208465576
+  },
+  {
+    "method": "one_shot_magnitude",
+    "target_sparsity": 0.5,
+    "actual_sparsity": 0.4917808219178082,
+    "test_accuracy": 0.9777777777777777,
+    "dense_flops": 12928,
+    "sparse_flops": 6466,
+    "train_time_sec": 0.754793643951416
+  },
+  {
+    "method": "dynamic_saliency_regrowth",
+    "target_sparsity": 0.7,
+    "actual_sparsity": 0.6748858447488585,
+    "test_accuracy": 0.9722222222222222,
+    "dense_flops": 12928,
+    "sparse_flops": 4060,
+    "train_time_sec": 0.8946547508239746
+  },
+  {
+    "method": "dynamic_magnitude",
+    "target_sparsity": 0.7,
+    "actual_sparsity": 0.6884322678843227,
+    "test_accuracy": 0.9777777777777777,
+    "dense_flops": 12928,
+    "sparse_flops": 3882,
+    "train_time_sec": 0.766742467880249
+  },
+  {
+    "method": "one_shot_magnitude",
+    "target_sparsity": 0.7,
+    "actual_sparsity": 0.6884322678843227,
+    "test_accuracy": 0.9777777777777777,
+    "dense_flops": 12928,
+    "sparse_flops": 3882,
+    "train_time_sec": 0.7176513671875
+  },
+  {
+    "method": "dynamic_saliency_regrowth",
+    "target_sparsity": 0.8,
+    "actual_sparsity": 0.7713850837138508,
+    "test_accuracy": 0.9611111111111111,
+    "dense_flops": 12928,
+    "sparse_flops": 2792,
+    "train_time_sec": 0.8553845882415771
+  },
+  {
+    "method": "dynamic_magnitude",
+    "target_sparsity": 0.8,
+    "actual_sparsity": 0.786910197869102,
+    "test_accuracy": 0.9777777777777777,
+    "dense_flops": 12928,
+    "sparse_flops": 2588,
+    "train_time_sec": 0.7564890384674072
+  },
+  {
+    "method": "one_shot_magnitude",
+    "target_sparsity": 0.8,
+    "actual_sparsity": 0.786910197869102,
+    "test_accuracy": 0.975,
+    "dense_flops": 12928,
+    "sparse_flops": 2588,
+    "train_time_sec": 0.758289098739624
+  },
+  {
+    "method": "dynamic_saliency_regrowth",
+    "target_sparsity": 0.9,
+    "actual_sparsity": 0.8677321156773211,
+    "test_accuracy": 0.9527777777777777,
+    "dense_flops": 12928,
+    "sparse_flops": 1526,
+    "train_time_sec": 0.8087611198425293
+  },
+  {
+    "method": "dynamic_magnitude",
+    "target_sparsity": 0.9,
+    "actual_sparsity": 0.8852359208523592,
+    "test_accuracy": 0.9638888888888889,
+    "dense_flops": 12928,
+    "sparse_flops": 1296,
+    "train_time_sec": 0.7543654441833496
+  },
+  {
+    "method": "one_shot_magnitude",
+    "target_sparsity": 0.9,
+    "actual_sparsity": 0.8852359208523592,
+    "test_accuracy": 0.9277777777777778,
+    "dense_flops": 12928,
+    "sparse_flops": 1296,
+    "train_time_sec": 0.7557575702667236
+  },
+  {
+    "method": "dynamic_saliency_regrowth",
+    "target_sparsity": 0.95,
+    "actual_sparsity": 0.9158295281582953,
+    "test_accuracy": 0.9583333333333334,
+    "dense_flops": 12928,
+    "sparse_flops": 894,
+    "train_time_sec": 0.8669359683990479
+  },
+  {
+    "method": "dynamic_magnitude",
+    "target_sparsity": 0.95,
+    "actual_sparsity": 0.9343987823439879,
+    "test_accuracy": 0.9361111111111111,
+    "dense_flops": 12928,
+    "sparse_flops": 650,
+    "train_time_sec": 0.7433841228485107
+  },
+  {
+    "method": "one_shot_magnitude",
+    "target_sparsity": 0.95,
+    "actual_sparsity": 0.9343987823439879,
+    "test_accuracy": 0.825,
+    "dense_flops": 12928,
+    "sparse_flops": 650,
+    "train_time_sec": 0.7551438808441162
+  },
+  {
+    "method": "dynamic_saliency_regrowth",
+    "target_sparsity": 0.98,
+    "actual_sparsity": 0.9449010654490106,
+    "test_accuracy": 0.9222222222222223,
+    "dense_flops": 12928,
+    "sparse_flops": 512,
+    "train_time_sec": 0.8246462345123291
+  },
+  {
+    "method": "dynamic_magnitude",
+    "target_sparsity": 0.98,
+    "actual_sparsity": 0.9639269406392694,
+    "test_accuracy": 0.7888888888888889,
+    "dense_flops": 12928,
+    "sparse_flops": 262,
+    "train_time_sec": 0.7851433753967285
+  },
+  {
+    "method": "one_shot_magnitude",
+    "target_sparsity": 0.98,
+    "actual_sparsity": 0.9639269406392694,
+    "test_accuracy": 0.17222222222222222,
+    "dense_flops": 12928,
+    "sparse_flops": 262,
+    "train_time_sec": 0.7273671627044678
+  }
+]
