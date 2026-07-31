@@ -1,9 +1,7 @@
 # AQUA Neural Network Engine: Design & Architecture Document
 
 ## Executive Summary
-This document outlines the foundational architecture, mathematical framework, computational graph design, and backpropagation mechanics for the AQUA reverse-mode automatic differentiation engine and neural network platform. 
-
-Additional features (such as dynamic self-pruning mechanisms, advanced importance criteria, and scale inference serving strategies) will be progressively detailed as each component is implemented.
+This document outlines the foundational architecture, mathematical framework, computational graph design, backpropagation mechanics, neural network abstractions, and dynamic self-pruning infrastructure for the AQUA platform.
 
 ---
 
@@ -19,16 +17,24 @@ aqua-platform/
 │   ├── module.py          # Module, Parameter, and Sequential containers
 │   ├── layers.py          # Linear and activation layers (ReLU, GELU, Sigmoid, Tanh)
 │   └── loss.py            # SoftmaxCrossEntropy loss function
+├── prune/                 # Dynamic Self-Pruning Infrastructure
+│   ├── mask.py            # Mask Manager for frozen/active weights
+│   ├── criteria.py        # Importance metrics (Magnitude, First-Order Taylor Saliency)
+│   ├── scheduler.py       # Pruning schedules (Cubic polynomial, Linear, One-shot)
+│   └── pruner.py          # Integrated Self-Pruning engine with regrowth support
 ├── train/                 # Optimization & Training Loop
-│   ├── optimizer.py       # Adam & SGD Optimizers
+│   ├── optimizer.py       # Adam & SGD Optimizers (with masked moment reset)
 │   ├── dataset.py         # Synthetic & standard dataset loaders
 │   └── trainer.py         # Mini-batched training loop & logger
 ├── tests/                 # Rigorous Test Suite
 │   ├── test_autodiff.py   # Unit tests & numerical gradient checking
-│   └── test_nn.py         # Neural network layer & optimizer convergence tests
+│   ├── test_masked.py     # Masked weight gradient & optimizer correctness test
+│   ├── test_nn.py         # Neural network layer & optimizer convergence tests
+│   └── test_prune.py      # Self-pruning schedule, saliency, and regrowth tests
 ├── scripts/               # Entry points for evaluation commands
-│   ├── run_grad_check.py  # Reproduction command: Gradient checking
-│   └── train_dense.py     # Reproduction command: Part 2 Dense model training
+│   ├── run_grad_check.py  # Reproduction command 1: Gradient checking
+│   ├── train_dense.py     # Reproduction command 2: Part 2 Dense model training
+│   └── train_pruned.py    # Reproduction command 3: Part 3 Self-pruning run
 ├── plots/                 # Generated learning curves and training figures
 └── artifacts/             # Raw experiment logs and metrics (JSON/CSV)
 ```
@@ -46,22 +52,12 @@ aqua-platform/
 - **Gradient Accumulation (`+=`)**: Variables referenced multiple times in a computation graph receive accumulated gradients from all output branches.
 - **Unbroadcasting Semantics**: Operations such as element-wise addition `(N, D) + (D,)` broadcast tensors forward. During backpropagation, incoming gradients are summed along broadcasted axes (`unbroadcast` helper) to match original parent tensor shapes.
 
-### 2.3 Operations & Mathematical Derivatives
-1. **Element-wise Addition / Subtraction / Multiplication / Division**:
-   - $\nabla_A (A + B) = \text{grad}$, $\nabla_B (A + B) = \text{grad}$
-   - $\nabla_A (A \cdot B) = \text{grad} \cdot B$, $\nabla_B (A \cdot B) = \text{grad} \cdot A$
-2. **Matrix Multiplication ($Y = A @ B$)**:
-   - $\nabla_A = \text{grad} @ B^T$
-   - $\nabla_B = A^T @ \text{grad}$
-3. **Reductions (Sum / Mean)**:
-   - Sum: $\nabla_A = \text{broadcast}(\text{grad}, A.\text{shape})$
-   - Mean: $\nabla_A = \text{broadcast}(\text{grad}, A.\text{shape}) / N$
-4. **Activations (ReLU, GELU, Sigmoid, Tanh)**:
-   - ReLU: $\nabla_x = \text{grad} \cdot \mathbb{I}(x > 0)$
-   - GELU: $\nabla_x = \text{grad} \cdot \left[ 0.5(1 + \tanh(u)) + 0.5 x (1 - \tanh^2(u)) \sqrt{\frac{2}{\pi}} (1 + 3 \cdot 0.044715 x^2) \right]$
-5. **Numerically Stable Softmax Cross-Entropy**:
-   - Forward: $\text{softmax}(z)_i = \frac{e^{z_i - \max(z)}}{\sum_j e^{z_j - \max(z)}}$, $\text{Loss} = -\frac{1}{N} \sum y_i \log(\text{softmax}(z)_i)$
-   - Backward: $\nabla_z \text{Loss} = \frac{1}{N} (\text{softmax}(z) - y)$
+### 2.3 Masked Weight Gradient Correctness
+- **Forward Pass**: Effective weight $\tilde{W} = W \odot M$.
+- **Backward Pass Derivative**: 
+  $$\frac{\partial L}{\partial W} = \frac{\partial L}{\partial \tilde{W}} \odot M$$
+  Since $W_{ij}$ influences loss $L$ strictly through $\tilde{W}_{ij} = W_{ij} M_{ij}$, when $M_{ij} = 0$, the mathematical partial derivative $\frac{\partial L}{\partial W_{ij}} = 0$.
+- **Adam Moment Integrity**: For masked parameters ($M_{ij} = 0$), Adam weight and moment updates are suppressed. Upon connection revival ($M_{ij} \to 1$), historic Adam moments ($m_{ij}, v_{ij}$) are explicitly reset to zero to prevent unscaled gradient step spikes.
 
 ---
 
@@ -69,14 +65,35 @@ aqua-platform/
 
 ### 3.1 Composable Layer Abstractions
 - **Module Base Class**: Base container that recursively collects model parameters via `.parameters()`.
-- **Linear Layer**: Computes $Y = X W + b$ with configurable weight initialization (He/Kaiming normal initialization for ReLU/GELU activations, Xavier uniform for linear/tanh).
+- **Linear Layer**: Computes $Y = X W + b$ with He/Kaiming normal initialization ($W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{d_{\text{in}}}}\right)$).
 
 ### 3.2 Optimizer Mechanics
 - **SGD with Momentum**:
-  $$v_{t+1} = \mu v_t + g_t$$
-  $$\theta_{t+1} = \theta_t - \eta v_{t+1}$$
+  $$v_{t+1} = \mu v_t + g_t, \quad \theta_{t+1} = \theta_t - \eta v_{t+1}$$
 - **Adam Optimizer**:
-  $$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$$
-  $$v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$$
-  $$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}$$
-  $$\theta_{t+1} = \theta_t - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
+  $$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t, \quad v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$$
+  $$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}, \quad \theta_{t+1} = \theta_t - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon} \odot M$$
+
+---
+
+## 4. Part 3 — Self-Pruning Mechanism & Theoretical Derivations
+
+### 4.1 Importance Criterion Derivation (First-Order Taylor Saliency)
+Static magnitude ($|W_{ij}|$) measures parameter size, but does not capture loss sensitivity. We derive our importance criterion via a 1st-order Taylor expansion of loss change under parameter removal ($\Delta W_{ij} = -W_{ij}$):
+
+$$L(W - W_{ij} e_{ij}) \approx L(W) - \frac{\partial L}{\partial W_{ij}} W_{ij} \implies \Delta L_{ij} \approx -\frac{\partial L}{\partial W_{ij}} W_{ij}$$
+
+Taking the absolute magnitude yields the **First-Order Taylor Saliency Criterion**:
+$$I_{ij} = \left| W_{ij} \cdot \frac{\partial L}{\partial \tilde{W}_{ij}} \right|$$
+
+Exponential moving averages smooth mini-batch variance over training steps:
+$$S_{ij}^{(t)} = \beta_s S_{ij}^{(t-1)} + (1 - \beta_s) I_{ij}^{(t)}$$
+
+### 4.2 Polynomial Pruning Schedule (Cubic Ramp)
+Rather than one-shot pruning, weights are progressively pruned following the cubic polynomial schedule (Zhu & Gupta, 2017):
+$$s_t = s_f + (s_i - s_f) \left( 1 - \frac{t - t_0}{n \cdot \Delta t} \right)^3$$
+where $s_i$ is initial sparsity (0.0), $s_f$ is final target sparsity (e.g. 0.90), and $t_0$ is the start step.
+
+### 4.3 Gradient-Based Regrowth (RigL Mechanics)
+- Periodically revives a small fraction of pruned zero-weights possessing the largest candidate gradient magnitudes $|\nabla_{\tilde{W}} L|$.
+- Enables the subnetwork to dynamically optimize sparse graph connectivity and recover capacity lost to early noisy pruning steps.
