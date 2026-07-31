@@ -122,11 +122,11 @@ $$s_t = s_f + (s_i - s_f) \left( 1 - \frac{t - t_0}{n \cdot \Delta t} \right)^3$
 ## 5. Part 4 — Pareto Sweep & Empirical Evidence
 
 ### 5.1 Experimental Sweep Matrix
-We conduct a Pareto sweep across target sparsities $S \in \{0\%, 50\%, 70\%, 80\%, 90\%, 95\%, 98\%\}$ comparing four distinct regimes:
-1. **Dense Baseline**: Unpruned network ($S=0\%$).
+We conduct a Pareto sweep across target sparsities $S \in \{0.0, 0.50, 0.70, 0.80, 0.90, 0.95, 0.98\}$ (from 0% to 98% sparsity) comparing four distinct regimes:
+1. **Dense Baseline**: Unpruned network ($S = 0.0$).
 2. **One-Shot Magnitude Pruning**: Post-training weight truncation.
 3. **Dynamic Magnitude Self-Pruning**: Progressive pruning during training based on $|W|$.
-4. **Dynamic Taylor Saliency Self-Pruning with Regrowth**: Dynamic pruning using $|W \cdot \nabla W|$ and RigL-style gradient revival.
+4. **Dynamic Taylor Saliency Self-Pruning with Regrowth**: Dynamic pruning using $|W \odot \nabla W|$ and RigL-style gradient revival.
 
 ### 5.2 FLOP Cost Model
 - Dense Linear FLOPs: $2 \times d_{\text{in}} \times d_{\text{out}}$ per sample.
