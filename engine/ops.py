@@ -248,14 +248,19 @@ def tanh(a: Tensor) -> Tensor:
 def softmax_cross_entropy(logits: Tensor, targets: Union[Tensor, np.ndarray]) -> Tensor:
     """
     Numerically stable Softmax Cross-Entropy Loss.
-    `logits`: (N, C) logits tensor
-    `targets`: (N, C) one-hot array/tensor or (N,) integer class indices
+    `logits`: (N, C) or (C,) logits tensor
+    `targets`: (N, C) one-hot array/tensor or (N,) / () integer class indices
     """
     logits_data = logits.data
     targets_data = targets.data if isinstance(targets, Tensor) else np.array(targets)
-    N = logits_data.shape[0]
     
-    # Softmax with max shift for numerical stability
+    is_1d = (logits_data.ndim == 1)
+    if is_1d:
+        logits_data = np.expand_dims(logits_data, axis=0)
+    if targets_data.ndim == 0:
+        targets_data = np.expand_dims(targets_data, axis=0)
+        
+    N = logits_data.shape[0]
     shift_logits = logits_data - np.max(logits_data, axis=-1, keepdims=True)
     exps = np.exp(shift_logits)
     probs = exps / np.sum(exps, axis=-1, keepdims=True)
@@ -272,6 +277,9 @@ def softmax_cross_entropy(logits: Tensor, targets: Union[Tensor, np.ndarray]) ->
     if logits.requires_grad:
         out._parents = {logits}
         def backward_fn(ctx: Context, grad: np.ndarray):
-            return (probs - one_hot) / N * grad,
+            dlogits = (probs - one_hot) / N * grad
+            if is_1d:
+                dlogits = np.squeeze(dlogits, axis=0)
+            return dlogits,
         out._ctx = Context("softmax_cross_entropy", backward_fn, saved_tensors=[logits])
     return out
